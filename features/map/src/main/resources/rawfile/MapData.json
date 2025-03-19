@@ -1,0 +1,29 @@
+{
+  "title": "构建应用",
+  "brief": "为了帮助开发者更好的理解HarmonyOS提供的能力，我们对重点功能提供了开发指导，辅助开发者完成应用的开发。",
+  "materials": [
+    {
+      "subtitle": "开发工具",
+      "knowledgeBase": [
+        { "type": "指南", "title": "DevEco Studio" },
+        { "type": "指南", "title": "低代码开发" },
+        { "type": "视频教程", "title": "使用DevEco Studio高效开发" }
+      ]
+    },
+    {
+      "subtitle": "开发语言",
+      "knowledgeBase": [
+        { "type": "指南", "title": "ArkTS" },
+        { "type": "视频教程", "title": "ArkTS基础知识" },
+        { "type": "指南", "title": "ArkTS开发实践" }
+      ]
+    },
+    {
+      "subtitle": "开发框架",
+      "knowledgeBase": [
+        { "type": "指南", "title": "ArkTS" },
+        { "type": "视频教程", "title": "ArkUI之属性动画" }
+      ]
+    }
+  ]
+}

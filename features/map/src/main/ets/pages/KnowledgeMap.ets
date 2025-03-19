@@ -1,4 +1,7 @@
+import { Section } from "../view/KnowledgeMapContent";
 import { NavBarItemType } from "../view/NavBarItem"
+import { BusinessError } from '@kit.BasicServicesKit';
+import { util } from "@kit.ArkTS";
 
 @Component
 export struct KnowledgeMap {
@@ -11,6 +14,26 @@ export struct KnowledgeMap {
     { order: '06', title: '商业变现' },
     { order: '07', title: '更多' }
   ];
+
+  @State sections: Section[] = [];
+
+   /** 获取ui数据 **/
+  private getSections() {
+    try {
+      getContext(this).resourceManager.getRawFileContent("MapData.json", (error: BusinessError, value: Uint8Array) => {
+        const textDecoder = util.TextDecoder.create("utf-8");
+        const res = textDecoder.decodeWithStream(value, { stream: false });
+        this.sections = JSON.parse(res);
+      });
+    } catch (error) {
+      console.error(`callback getRawFileContent failed, error is ${JSON.stringify(error)}`)
+    }
+  }
+
+  aboutToAppear(){
+    this.getSections();
+  }
+
 
   build() {
     Scroll() {
@@ -93,3 +116,4 @@ export struct NavBarItem {
     .backgroundColor('#F1F3F5')
   }
 }
+
