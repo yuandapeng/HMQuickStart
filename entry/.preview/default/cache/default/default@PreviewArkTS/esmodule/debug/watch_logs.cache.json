@@ -1,0 +1,1 @@
+[{"time":"2025-03-19T06:50:37.024Z","category":"etsTransform","level":"warn","msg":"\u001b[33mArkTS:WARN File: /Users/peipeng.yuan.o/QuickStart/entry/src/main/ets/pages/Index.ets:287:3\n The variable with @Prop in component with @Preview may cause error in component preview mode","type":"plugin_log"}]
