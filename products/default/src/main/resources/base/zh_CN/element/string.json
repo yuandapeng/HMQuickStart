@@ -2,7 +2,7 @@
   "string": [
     {
       "name": "module_desc",
-      "value": "module description"
+      "value": "模块描述"
     },
     {
       "name": "EntryAbility_desc",
@@ -11,6 +11,10 @@
     {
       "name": "EntryAbility_label",
       "value": "HMOS世界入门版"
+    },
+    {
+      "name": "apply_for_network",
+      "value": "允许应用使用网络"
     }
   ]
 }
