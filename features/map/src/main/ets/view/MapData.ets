@@ -1,4 +1,6 @@
-[
+import { Section } from "./KnowledgeMapContent";
+
+export const  mockSections: Section[] = [
   {
     "title": "准备与学习",
     "brief": "加入HarmonyOS生态，注册成为开发者，通过HarmonyOS课程了解基本概念和基础知识，轻松开启HarmonyOS的开发旅程。",

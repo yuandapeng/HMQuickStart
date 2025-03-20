@@ -1,10 +1,16 @@
-import { Section } from "../view/KnowledgeMapContent";
+import { KnowledgeMapContent, Section } from "../view/KnowledgeMapContent";
 import { NavBarItemType } from "../view/NavBarItem"
 import { BusinessError } from '@kit.BasicServicesKit';
 import { util } from "@kit.ArkTS";
+import { mockSections } from "../view/MapData";
 
 @Component
 export struct KnowledgeMap {
+  // 定义路由栈
+  @Provide('knowledgeMapPageStack') knowledgeMapPageStack: NavPathStack = new NavPathStack();
+
+  @State currentNavBarIndex: number = -1;
+
   @State navBarList: NavBarItemType[] = [
     { order: '01', title: '准备与学习' },
     { order: '02', title: '构建应用' },
@@ -26,6 +32,7 @@ export struct KnowledgeMap {
         this.sections = JSON.parse(res);
       });
     } catch (error) {
+      this.sections = mockSections; // previewer api被mock所以不能正常获取数据
       console.error(`callback getRawFileContent failed, error is ${JSON.stringify(error)}`)
     }
   }
@@ -35,56 +42,71 @@ export struct KnowledgeMap {
   }
 
 
-  build() {
-    Scroll() {
-       Column() {
-         Text('知识地图')
-           .fontFamily('HarmonyHeiTi-Bold')
-           .fontSize(24)
-           .fontColor(Color.Black)
-           .textAlign(TextAlign.Start)
-           .lineHeight(33)
-           .fontWeight(700)
-           .width('100%')
-         Image($r("app.media.knowledge_map_banner"))
-           .width('100%')
-           .borderRadius(16)
-           .margin({ top: 19, bottom: 8 })
-         Text('通过循序渐进的学习路径，无经验和有经验的开发者都可以轻松掌握ArkTS语言声明式开发范式，体验更简洁、更友好的HarmonyOS应用开发旅程。')
-           .fontFamily('HarmonyHeiTi')
-           .fontSize(14)
-           .fontColor('rgba(0,0,0,0.60)')
-           .fontWeight(400)
-           .textAlign(TextAlign.Start)
-         List({ space: 12 }) {
-           ForEach(this.navBarList, (item: NavBarItemType, index: number) => {
-             ListItem() {
-               NavBarItem({ navBarItem: item })
-             }
-             .width('100%')
-           }, (item: NavBarItemType): string => item.title)
-         }
-         .width('100%')
-         .margin({ top: 24 })
-       }
-       .padding({
-         top: 12,
-         right: 16,
-         bottom: 12,
-         left: 16
-       })
-       .backgroundColor('#F1F3F5')
+  @Builder
+  PageMap(name: string) {
+    if (name === 'KnowledgeMapContent') {
+      KnowledgeMapContent({ section: this.sections[this.currentNavBarIndex] });
     }
-    .backgroundColor('#F1F3F5')
-    .align(Alignment.TopStart)
-    .constraintSize({ minHeight: '100%' })
-    .edgeEffect(EdgeEffect.Spring)
+  }
+
+  build() {
+    Navigation(this.knowledgeMapPageStack) {
+      Scroll() {
+        Column() {
+          Text('知识地图')
+            .fontFamily('HarmonyHeiTi-Bold')
+            .fontSize(24)
+            .fontColor(Color.Black)
+            .textAlign(TextAlign.Start)
+            .lineHeight(33)
+            .fontWeight(700)
+            .width('100%')
+          Image($r("app.media.knowledge_map_banner"))
+            .width('100%')
+            .borderRadius(16)
+            .margin({ top: 19, bottom: 8 })
+          Text('通过循序渐进的学习路径，无经验和有经验的开发者都可以轻松掌握ArkTS语言声明式开发范式，体验更简洁、更友好的HarmonyOS应用开发旅程。')
+            .fontFamily('HarmonyHeiTi')
+            .fontSize(14)
+            .fontColor('rgba(0,0,0,0.60)')
+            .fontWeight(400)
+            .textAlign(TextAlign.Start)
+          List({ space: 12 }) {
+            ForEach(this.navBarList, (item: NavBarItemType, index: number) => {
+              ListItem() {
+                NavBarItem({ navBarItem: item, currentNavBarIndex: this.currentNavBarIndex })
+              }
+              .width('100%')
+            }, (item: NavBarItemType): string => item.title)
+          }
+          .width('100%')
+          .margin({ top: 24 })
+        }
+        .padding({
+          top: 12,
+          right: 16,
+          bottom: 12,
+          left: 16
+        })
+        .backgroundColor('#F1F3F5')
+      }
+      .backgroundColor('#F1F3F5')
+      .align(Alignment.TopStart)
+      .constraintSize({ minHeight: '100%' })
+      .edgeEffect(EdgeEffect.Spring)
+    }
+    .hideTitleBar(true) // 页面已经存在标题所以这里隐藏nav标题
+    .navDestination(this.PageMap) // 自定义路由配置
+    .mode(NavigationMode.Stack) // 设置为单页面显示模式
   }
 }
 
 @Component
 export struct NavBarItem {
   @Prop navBarItem: NavBarItemType;
+  @Consume('knowledgeMapPageStack') knowledgeMapPageStack: NavPathStack;
+  // 之所以使用@Link的方式，是由于需要在组件中对值进行修改，并将修改同步到KnowledgeMap组件中
+  @Link currentNavBarIndex: number;
 
   build() {
     Row(){
@@ -113,7 +135,15 @@ export struct NavBarItem {
     .borderRadius(16)
     .alignItems(VerticalAlign.Center)
     .padding({ left: 12, right: 12 })
-    .backgroundColor('#F1F3F5')
+    .backgroundColor(
+      this.currentNavBarIndex === Number(this.navBarItem.order) - 1 ?
+      '#1A0A59F7' : Color.Transparent
+    )
+    .onClick(()=> {
+      const index =  Number(this.navBarItem.order)  - 1;
+      this.knowledgeMapPageStack.replacePath({ name: 'KnowledgeMapContent' });
+      this.currentNavBarIndex = index;
+    })
   }
 }
 

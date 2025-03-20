@@ -275,7 +275,6 @@ struct TutorialView {
 }
 
 
-@Preview
 @Component
 struct TutorialItem {
   @Prop tutorialItem: ArticleClass;
