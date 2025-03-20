@@ -1,6 +1,7 @@
 import { ArticleClass } from "../models/ArticleClass"
 import { BannerClass } from "../models/BannerClass";
 import { ArticleDetailPage } from "./ArticleDetailPage";
+import { BannerDetailPage } from './BannerDetailPage';
 
 @Component
 export struct QuickStartPage {
@@ -12,6 +13,8 @@ export struct QuickStartPage {
   quickStartRouter(name: string, param?: ArticleClass | BannerClass) {
     if (name === 'articleDetail') {
       ArticleDetailPage()
+    } else if (name === 'bannerDetailPage') {
+      BannerDetailPage()
     }
   }
 
@@ -47,6 +50,8 @@ export struct QuickStartPage {
 
 @Component
 struct Banner {
+  @Consume('articlePathStack') articlePathStack: NavPathStack;
+
   @State bannerList: Array<BannerClass> = [
     new BannerClass('pic0', $r('app.media.banner_pic0'),
       'https://developer.huawei.com/consumer/cn/training/course/video/C101718352529709527'),
@@ -70,6 +75,9 @@ struct Banner {
           .width('100%')
           .padding({ left: 16,right: 16, top: 11 })
           .borderRadius(16)
+          .onClick(()=> {
+            this.articlePathStack.pushPathByName('bannerDetailPage', item)
+          })
       }, (item: BannerClass) => item.id)
     }
     .autoPlay(true)
