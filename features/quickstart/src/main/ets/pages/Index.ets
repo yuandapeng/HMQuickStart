@@ -1,71 +1,50 @@
-
+import { ArticleClass } from "../models/ArticleClass"
+import { BannerClass } from "../models/BannerClass";
+import { ArticleDetailPage } from "./ArticleDetailPage";
 
 @Component
 export struct QuickStartPage {
   @State message: string = '快速入门';
+  @Provide('articlePathStack') articlePathStack: NavPathStack = new NavPathStack();
+
+
+  @Builder
+  quickStartRouter(name: string, param?: ArticleClass | BannerClass) {
+    if (name === 'articleDetail') {
+      ArticleDetailPage()
+    }
+  }
+
 
   build() {
-
-    Column() {
-      Text(this.message)
-        .fontSize(24)
-        .fontWeight(700)
-        .width('100%')
-        .textAlign(TextAlign.Start)
-        .padding({ left: 16 })
-        .fontFamily("HarmonyHeiTi-Bold")
-        .lineHeight(33)
-      Scroll(){
+    Navigation(this.articlePathStack) {
+      Column() {
+        Text(this.message)
+          .fontSize(24)
+          .fontWeight(700)
+          .width('100%')
+          .textAlign(TextAlign.Start)
+          .padding({ left: 16 })
+          .fontFamily("HarmonyHeiTi-Bold")
+          .lineHeight(33)
+        Scroll() {
           Column() {
             Banner()
             EnablementView()
             TutorialView()
           }
+        }
       }
+      .height('100%')
+      .width('100%')
+      .backgroundColor('#F1F3F5')
     }
-    .height('100%')
-    .width('100%')
-    .backgroundColor('#F1F3F5')
+    .navDestination(this.quickStartRouter)
+    .hideTitleBar(true)
+    .mode(NavigationMode.Stack)
   }
 }
 
-
-class BannerClass {
-  /** 图片唯一标识 **/
-  id: string = '';
-  /** 图片资源路径 **/
-  src: ResourceStr = '';
-  /** 图片跳转链接 **/
-  url: string = '';
-
-  constructor(id: string, src: ResourceStr, url: string) {
-    this.id = id;
-    this.src= src;
-    this.url = url;
-  }
-}
-
-class ArticleClass {
-  id: string = '';
-  imageSrc: ResourceStr = '';
-  title: string = '';
-  brief: string = '';
-  url: string = '';
-
-  constructor(id: string, imageSrc: ResourceStr, title: string, brief: string, url: string) {
-    this.id = id;
-    this.imageSrc = imageSrc;
-    this.title = title;
-    this.brief = brief;
-    this.url = url;
-  }
-}
-
-
-
-
-
-//@Preview
 @Component
 struct Banner {
   @State bannerList: Array<BannerClass> = [
@@ -108,6 +87,8 @@ struct Banner {
 
 @Component
 struct EnablementView {
+  @Consume('articlePathStack') articlePathStack: NavPathStack;
+
   @State enablementList: Array<ArticleClass> = [
     new ArticleClass('1', $r('app.media.enablement_pic1'), 'HarmonyOS第一课',
       '基于真实的开发场景，提供向导式学习，多维度融合课程等内容，给开发者提供全新的学习体验。',
@@ -148,6 +129,9 @@ struct EnablementView {
         ForEach(this.enablementList, (item: ArticleClass)=> {
           GridItem(){
             EnablementItem({ enablementItem: item })
+              .onClick(() => {
+                this.articlePathStack.pushPathByName('articleDetail', item)
+              })
           }
         }, (item: ArticleClass)=> {
           return item.id
@@ -214,6 +198,9 @@ struct EnablementItem {
 
 @Component
 struct TutorialView {
+
+  @Consume('articlePathStack') articlePathStack: NavPathStack;
+
   @State tutorialList: Array<ArticleClass> = [
     new ArticleClass('1', $r('app.media.tutorial_pic1'), 'Step1 环境的搭建',
       '本篇教程实现了快速入门——一个用于了解和学习HarmonyOS的应用程序。',
@@ -262,6 +249,9 @@ struct TutorialView {
       List({ space: 12 }) {
         ForEach(this.tutorialList, (item: ArticleClass)=> {
           TutorialItem({ tutorialItem: item })
+            .onClick(()=> {
+              this.articlePathStack.pushPathByName('articleDetail', item)
+            })
         }, (item: ArticleClass)=> {
           return item.id
         })
